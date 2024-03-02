@@ -110,7 +110,9 @@ const main = async () => {
 
     clearInterval(loadingInterval);
     const directory = outputDir || "subtitles";
-    fs.rmSync(outTempDir, { recursive: true });
+    if(fs.existsSync(outTempDir)) {
+      fs.rmSync(outTempDir, { recursive: true });
+    }
 
     info(`Creando carpeta '${directory}'`);
     fs.mkdirSync(directory, { recursive: true });

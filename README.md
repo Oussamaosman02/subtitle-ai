@@ -12,12 +12,22 @@ npm i -G .
 
 Ahora podrás usar el comando `subtitle-ai` para crear subtítulos a tus videos desde cualquier parte del sistema.
 
+## Uso sin instalación
+
+También puedes usarlo sin tener que instalarlo en el sistema, para ello, una vez instalados los paquetes (`npm install`), ejecuta el siguiente comando:
+
+```bash
+npm run start -key "sk-***" -v ruta/al/video.mp4
+```
+
+Para los ejemplos, sería igual, solamente cambiando `subtitle-ai` por `npm run start`.
+
 ## Ejemplos
 
 ### Crear subtítulos
 
 ```bash
-subtitle-ai -key "sk-***" -a ruta/al/video.mp4
+subtitle-ai -key "sk-***" -v ruta/al/video.mp4
 ```
 
 Esto creará una carpeta llamada **subtitles** con 4 archivos: **subtitulos-frases.srt**, **subtitulos-palabras.srt**, **subtitulos-frases.vtt**, **subtitulos-palabras.vtt**.
@@ -27,7 +37,7 @@ Esto creará una carpeta llamada **subtitles** con 4 archivos: **subtitulos-fras
 Si quieres especificar la carpeta de salida:
 
 ```bash
-subtitle-ai -key "sk-***" -a ruta/al/video.mp4 -o ruta/destino/
+subtitle-ai -key "sk-***" -v ruta/al/video.mp4 -s ruta/destino/
 ```
 
 ### Especificar tipo de subtítulo
@@ -35,7 +45,7 @@ subtitle-ai -key "sk-***" -a ruta/al/video.mp4 -o ruta/destino/
 Si quieres especificar el tipo de subtítulo:
 
 ```bash
-subtitle-ai -key "sk-***" -a ruta/al/video.mp4 -t srt
+subtitle-ai -key "sk-***" -v ruta/al/video.mp4 -t srt
 ```
 
 Pueden ser de tipo srt o vtt. Si no pones nada, se crearán ambos tipos de archivos.
@@ -45,7 +55,7 @@ Pueden ser de tipo srt o vtt. Si no pones nada, se crearán ambos tipos de archi
 Si quieres especificar el modo de subtítulo:
 
 ```bash
-subtitle-ai -key "sk-***" -a ruta/al/video.mp4 -m frases
+subtitle-ai -key "sk-***" -v ruta/al/video.mp4 -m frases
 ```
 
 Pueden ser de tipo frases o palabras. Si no pones nada, se crearán ambos tipos de archivos.
