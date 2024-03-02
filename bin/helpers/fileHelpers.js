@@ -73,13 +73,14 @@ function getVideoDuration(filePath) {
 export async function splitVideo(filePath, outputDir = ".chunks/") {
   const fileSize = fs.statSync(filePath).size; // in bytes
   const maxFileSize = 25 * 1024 * 1024; // 25MB in bytes
+  const maxOutputFileSize = 20 * 1024 * 1024; // 23MB in bytes
 
   if (fileSize <= maxFileSize) {
     // File size is within the limit. Return the file path.
     return [filePath];
   }
 
-  const numParts = Math.ceil(fileSize / maxFileSize);
+  const numParts = Math.ceil(fileSize / maxOutputFileSize);
   const duration = await getVideoDuration(filePath);
   const partDuration = duration / numParts;
   const outputFilePaths = [];
@@ -94,7 +95,7 @@ export async function splitVideo(filePath, outputDir = ".chunks/") {
   return new Promise((resolve, reject) => {
     for (let i = 0; i < numParts; i++) {
       const startTime = i * partDuration;
-      const outputFile = outputDir + `part${i + 1}.mp4`;
+      const outputFile = outputDir + `part-${i + 1}.mp4`;
 
       ffmpeg(filePath)
         .setStartTime(startTime)

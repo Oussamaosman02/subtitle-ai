@@ -11,12 +11,21 @@ export async function createSubtitles({ fileStream, key, mode }) {
     apiKey: key,
   });
 
-  const transcription = await openai.audio.transcriptions.create({
-    file: fileStream,
-    model: "whisper-1",
-    response_format: "verbose_json",
-    timestamp_granularities: mode,
-  });
+  try {
+    const transcription = await openai.audio.transcriptions.create({
+      file: fileStream,
+      model: "whisper-1",
+      response_format: "verbose_json",
+      timestamp_granularities: mode,
+    });
 
-  return transcription;
+    return transcription;
+  } catch (e) {
+    console.log(e);
+    return {
+      segments: [],
+      words: [],
+      text: "",
+    };
+  }
 }
