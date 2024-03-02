@@ -1,0 +1,22 @@
+{
+  "name": "subtitles",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "subtitle-ai": "./bin/index.js"
+  },
+  "keywords": [],
+  "author": "Amalio",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "openai": "^4.28.4",
+    "yargs": "^17.7.2"
+  }
+}
