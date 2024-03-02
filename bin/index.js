@@ -85,8 +85,8 @@ const main = async () => {
     info(message);
   }, 1000);
   try {
-    const outTempDir = ".chunks/";
-    const fileStreams = await splitVideo(video);
+    const outTempDir = ".temp/";
+    const fileStreams = await splitVideo(video, outTempDir);
     message = "Generando subtítulos...";
     const subtitlesRaw = await Promise.all(
       fileStreams.map(
@@ -124,37 +124,37 @@ const main = async () => {
 
     if (type === "srt") {
       writeSubtitleToFile(
-        `${directory}/subtitles-phrase.srt`,
+        `${directory}/subtitulos-frases.srt`,
         subtitlesSrtSegments
       );
       writeSubtitleToFile(
-        `${directory}/subtitles-words.srt`,
+        `${directory}/subtitulos-palabras.srt`,
         subtitlesSrtWords
       );
     } else if (type === "vtt") {
       writeSubtitleToFile(
-        `${directory}/subtitles-phrase.vtt`,
+        `${directory}/subtitulos-frases.vtt`,
         subtitlesVttSegments
       );
       writeSubtitleToFile(
-        `${directory}/subtitles-words.vtt`,
+        `${directory}/subtitulos-palabras.vtt`,
         subtitlesVttWords
       );
     } else {
       writeSubtitleToFile(
-        `${directory}/subtitles-phrase.srt`,
+        `${directory}/subtitulos-frases.srt`,
         subtitlesSrtSegments
       );
       writeSubtitleToFile(
-        `${directory}/subtitles-words.srt`,
+        `${directory}/subtitulos-palabras.srt`,
         subtitlesSrtWords
       );
       writeSubtitleToFile(
-        `${directory}/subtitles-phrase.vtt`,
+        `${directory}/subtitulos-frases.vtt`,
         subtitlesVttSegments
       );
       writeSubtitleToFile(
-        `${directory}/subtitles-words.vtt`,
+        `${directory}/subtitulos-palabras.vtt`,
         subtitlesVttWords
       );
     }
@@ -173,8 +173,7 @@ const main = async () => {
     if (typeof errorText === "string") {
       error(errorText);
     } else {
-      console.error({ errorText });
-      // error(JSON.stringify({ error: errorText }));
+      console.error(errorText);
     }
     return;
   }
