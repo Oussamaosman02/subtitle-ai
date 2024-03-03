@@ -22,7 +22,11 @@ npm run start -key "sk-***" -v ruta/al/video.mp4
 
 Para los ejemplos, sería igual, solamente cambiando `subtitle-ai` por `npm run start`.
 
-## Ejemplos
+## Ejemplos de uso
+
+### A tener en cuenta
+
+En el proceso se crea una carpeta llamada `.temp`, **no la borres**, ya que se borrará sola cuando el proceso haya acabado y sin ella fallaría.
 
 ### Crear subtítulos
 
@@ -31,6 +35,16 @@ subtitle-ai -key "sk-***" -v ruta/al/video.mp4
 ```
 
 Esto creará una carpeta llamada **subtitles** con 4 archivos: **subtitulos-frases.srt**, **subtitulos-palabras.srt**, **subtitulos-frases.vtt**, **subtitulos-palabras.vtt**.
+
+### Crear subtítulos de un video de YouTube
+
+```bash
+subtitle-ai -key "sk-***" -v ruta/al/video.mp4
+```
+
+EL vídeo será descargado en la carpeta `.temp`, si quieres guardarte también el vídeo, deberás copiarlo antes de que el proceso finalice, ya que la carpeta se borrará automáticamente.
+
+> Es necesario al menos usar -v o -u ya que son obligatorios, pero no son complementarios, solo debes escoger uno.
 
 ### Especificar la carpeta de salida
 

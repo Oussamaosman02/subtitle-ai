@@ -12,6 +12,7 @@ import {
   writeSubtitleToFile,
 } from "./helpers/subtitlesHelpers.js";
 import { splitVideo } from "./helpers/fileHelpers.js";
+import { getVideo } from "./helpers/youtubeHelpers.js";
 
 const log = (...text) =>
   console.log(chalk.hex("#DEADED").bold(" >>> "), ...text);
@@ -30,11 +31,17 @@ yargs(hideBin(process.argv))
     describe: "Api key de Openai",
     demandOption: true,
   })
+  .option("url", {
+    alias: "u",
+    type: "video",
+    describe: "Link del video de YouTube",
+    demandOption: false,
+  })
   .option("video", {
     alias: "v",
     type: "video",
     describe: "Ruta del video a subtitular",
-    demandOption: true,
+    demandOption: false,
   })
   .option("salida", {
     alias: "s",
@@ -63,6 +70,7 @@ yargs(hideBin(process.argv))
 
 const key = getArguments("key");
 const video = getArguments("video");
+const url = getArguments("url");
 const outputDir = getArguments("salida");
 const type = getArguments("tipo");
 const mode = getArguments("modo");
@@ -77,22 +85,36 @@ const chosenMode = () => {
   }
 };
 
-const main = async () => {
+const main = async (prefix = "subtitulos") => {
   const startDate = new Date();
   info("Empezando tarea");
   let message = "Procesando video...";
-  const loadingInterval = setInterval(() => {
-    info(message);
-  }, 1000);
+  let loadingInterval;
+  if (!url && !video) {
+    error("No se ha proporcionado un video");
+    return;
+  }
   try {
     const outTempDir = ".temp/";
-    const fileStreams = await splitVideo(video, outTempDir);
+    let videoPath = "";
+    if (url && !video) {
+      videoPath = await getVideo(url, outTempDir).then((path) => path);
+    } else if (video && !url) {
+      videoPath = video;
+    } else {
+      error("Se han proporcionado dos fuentes de video y solo se admite una");
+      return;
+    }
+    loadingInterval = setInterval(() => {
+      info(message);
+    }, 1000);
+    const filePaths = await splitVideo(videoPath, outTempDir, prefix);
     message = "Generando subtítulos...";
     const subtitlesRaw = await Promise.all(
-      fileStreams.map(
-        async (fileStream) =>
+      filePaths.map(
+        async (filePath) =>
           await createSubtitles({
-            fileStream: fs.createReadStream(fileStream),
+            filePath,
             key,
             mode: chosenMode(),
           })
@@ -103,14 +125,15 @@ const main = async () => {
       (prev, curr) => {
         prev.words = [...(prev.words || []), ...(curr.words || [])];
         prev.segments = [...(prev.segments || []), ...(curr.segments || [])];
+        prev.text = `${prev.text} ${curr.text}`;
         return prev;
       },
-      { words: [], segments: [] }
+      { words: [], segments: [], text: "" }
     );
 
     clearInterval(loadingInterval);
     const directory = outputDir || "subtitles";
-    if(fs.existsSync(outTempDir)) {
+    if (fs.existsSync(outTempDir)) {
       fs.rmSync(outTempDir, { recursive: true });
     }
 
@@ -124,39 +147,44 @@ const main = async () => {
 
     info("Guardando archivos...");
 
+    writeSubtitleToFile(
+      `${directory}/${prefix}-texto.txt`,
+      subtitles.text
+    );
+
     if (type === "srt") {
       writeSubtitleToFile(
-        `${directory}/subtitulos-frases.srt`,
+        `${directory}/${prefix}-frases.srt`,
         subtitlesSrtSegments
       );
       writeSubtitleToFile(
-        `${directory}/subtitulos-palabras.srt`,
+        `${directory}/${prefix}-palabras.srt`,
         subtitlesSrtWords
       );
     } else if (type === "vtt") {
       writeSubtitleToFile(
-        `${directory}/subtitulos-frases.vtt`,
+        `${directory}/${prefix}-frases.vtt`,
         subtitlesVttSegments
       );
       writeSubtitleToFile(
-        `${directory}/subtitulos-palabras.vtt`,
+        `${directory}/${prefix}-palabras.vtt`,
         subtitlesVttWords
       );
     } else {
       writeSubtitleToFile(
-        `${directory}/subtitulos-frases.srt`,
+        `${directory}/${prefix}-frases.srt`,
         subtitlesSrtSegments
       );
       writeSubtitleToFile(
-        `${directory}/subtitulos-palabras.srt`,
+        `${directory}/${prefix}-palabras.srt`,
         subtitlesSrtWords
       );
       writeSubtitleToFile(
-        `${directory}/subtitulos-frases.vtt`,
+        `${directory}/${prefix}-frases.vtt`,
         subtitlesVttSegments
       );
       writeSubtitleToFile(
-        `${directory}/subtitulos-palabras.vtt`,
+        `${directory}/${prefix}-palabras.vtt`,
         subtitlesVttWords
       );
     }

@@ -63,14 +63,14 @@ export async function getSegmentSubtitles(subtitles = [], mode) {
   let vttContent = `WEBVTT\n\n`;
   subtitles.forEach((subtitle) => {
     srtContent += `${Number(subtitle.id) + 1}\n`;
-    srtContent += `${secondsToSRTTime(subtitle.start)} --> ${secondsToSRTTime(
-      subtitle.end
+    srtContent += `${secondsToSRTTime(subtitle?.start)} --> ${secondsToSRTTime(
+      subtitle?.end
     )}\n`;
     srtContent += `${subtitle.text}\n\n`;
     vttContent += `${subtitle.id}\n`;
     vttContent += timeStampSrtToVtt(
-      `${secondsToSRTTime(subtitle.start)} --> ${secondsToSRTTime(
-        subtitle.end
+      `${secondsToSRTTime(subtitle?.start)} --> ${secondsToSRTTime(
+        subtitle?.end
       )}\n`
     );
     vttContent += `${subtitle.text}\n\n`;
@@ -97,14 +97,14 @@ export async function getWordSubtitles(subtitles = [], mode) {
   let vttContent = `WEBVTT\n\n`;
   subtitles.forEach((subtitle, idx) => {
     srtContent += `${idx + 1}\n`;
-    srtContent += `${secondsToSRTTime(subtitle.start)} --> ${secondsToSRTTime(
-      subtitle.end
+    srtContent += `${secondsToSRTTime(subtitle?.start)} --> ${secondsToSRTTime(
+      subtitle?.end
     )}\n`;
     srtContent += `${subtitle.word}\n\n`;
     vttContent += `${idx}\n`;
     vttContent += timeStampSrtToVtt(
-      `${secondsToSRTTime(subtitle.start)} --> ${secondsToSRTTime(
-        subtitle.end
+      `${secondsToSRTTime(subtitle?.start)} --> ${secondsToSRTTime(
+        subtitle?.end
       )}\n`
     );
     vttContent += `${subtitle.word}\n\n`;
@@ -120,12 +120,13 @@ export async function getWordSubtitles(subtitles = [], mode) {
  * @return {undefined}
  */
 export const processSubtitles = (subtitles) => {
-  if (subtitles.length === 1) {
-    return subtitles;
+  const sortedSubtitles = [...subtitles].sort((a, b) => a.id - b.id);
+  if (sortedSubtitles.length === 1) {
+    return sortedSubtitles;
   } else {
-    for (let idx = 0; idx < subtitles.length; idx++) {
-      const sub = subtitles[idx];
-      const prev = subtitles[idx - 1];
+    for (let idx = 0; idx < sortedSubtitles.length; idx++) {
+      const sub = sortedSubtitles[idx];
+      const prev = sortedSubtitles[idx - 1];
       if (prev?.text) {
         sub.segments = (sub.segments || []).map((segment) => {
           const prevSegment = [...prev.segments].reverse()[0];
@@ -135,8 +136,8 @@ export const processSubtitles = (subtitles) => {
           return {
             ...segment,
             id: segment.id + prevSegment.id,
-            start: segment.start + prevSegment.end,
-            end: segment.end + prevSegment.end,
+            start: segment?.start + prevSegment?.end,
+            end: segment?.end + prevSegment?.end,
           };
         });
         sub.words = (sub.words || []).map((word) => {
@@ -147,13 +148,13 @@ export const processSubtitles = (subtitles) => {
           return {
             ...word,
             id: word.id + prevWord.id,
-            start: word.start + prevWord.end,
-            end: word.end + prevWord.end,
+            start: word?.start + prevWord?.end,
+            end: word?.end + prevWord?.end,
           };
         });
       }
     }
-    return subtitles;
+    return sortedSubtitles;
   }
 };
 
