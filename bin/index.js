@@ -94,8 +94,8 @@ const main = async (prefix = "subtitulos") => {
     error("No se ha proporcionado un video");
     return;
   }
+  const outTempDir = ".temp/";
   try {
-    const outTempDir = ".temp/";
     let videoPath = "";
     if (url && !video) {
       videoPath = await getVideo(url, outTempDir).then((path) => path);
@@ -147,10 +147,7 @@ const main = async (prefix = "subtitulos") => {
 
     info("Guardando archivos...");
 
-    writeSubtitleToFile(
-      `${directory}/${prefix}-texto.txt`,
-      subtitles.text
-    );
+    writeSubtitleToFile(`${directory}/${prefix}-texto.txt`, subtitles.text);
 
     if (type === "srt") {
       writeSubtitleToFile(
@@ -200,6 +197,9 @@ const main = async (prefix = "subtitulos") => {
     );
   } catch (errorText) {
     clearInterval(loadingInterval);
+    if (fs.existsSync(outTempDir)) {
+      fs.rmSync(outTempDir, { recursive: true });
+    }
     if (typeof errorText === "string") {
       error(errorText);
     } else {

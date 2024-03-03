@@ -1,6 +1,6 @@
 # Instalación
 
-> Necesitas tener instalado node, [tutorial](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+> Necesitas tener instalado node, [tutorial](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) y ffmpeg [instalar](https://ffmpeg.org/download.html)
 
 Clona este repositorio y ejecuta el comando `npm install` para instalar las dependencias de este proyecto.
 
@@ -10,7 +10,7 @@ Una vez instalados los paquetes, ejecuta el siguiente comando:
 npm i -g .
 ```
 
-Ahora podrás usar el comando `subtitle-ai` para crear subtítulos a tus videos desde cualquier parte del sistema.
+Ahora podrás usar el comando `subtitle-ai` para crear subtítulos a tus videos desde cualquier parte del sistema usando la terminal.
 
 ## Uso sin instalación
 
