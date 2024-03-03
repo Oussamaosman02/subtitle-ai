@@ -7,14 +7,14 @@ Clona este repositorio y ejecuta el comando `npm install` para instalar las depe
 Una vez instalados los paquetes, ejecuta el siguiente comando:
 
 ```bash
-npm i -G .
+npm i -g .
 ```
 
 Ahora podrás usar el comando `subtitle-ai` para crear subtítulos a tus videos desde cualquier parte del sistema.
 
 ## Uso sin instalación
 
-También puedes usarlo sin tener que instalarlo en el sistema, para ello, una vez instalados los paquetes (`npm install`), ejecuta el siguiente comando:
+También puedes usarlo sin tener que instalarlo a nivel de sistema, para ello, una vez instalados los paquetes (`npm install`), ejecuta el siguiente comando:
 
 ```bash
 npm run start -key "sk-***" -v ruta/al/video.mp4
@@ -26,7 +26,9 @@ Para los ejemplos, sería igual, solamente cambiando `subtitle-ai` por `npm run 
 
 ### A tener en cuenta
 
-En el proceso se crea una carpeta llamada `.temp`, **no la borres**, ya que se borrará sola cuando el proceso haya acabado y sin ella fallaría.
+La key será la api key de OpenAi, puedes generar una [aquí](https://platform.openai.com/api-keys).
+
+En el proceso se crea una carpeta llamada `.temp`, **no la borres**, ya que se borrará de manera automática cuando el proceso haya acabado y sin ella fallaría.
 
 ### Crear subtítulos
 
@@ -34,12 +36,12 @@ En el proceso se crea una carpeta llamada `.temp`, **no la borres**, ya que se b
 subtitle-ai -key "sk-***" -v ruta/al/video.mp4
 ```
 
-Esto creará una carpeta llamada **subtitles** con 4 archivos: **subtitulos-frases.srt**, **subtitulos-palabras.srt**, **subtitulos-frases.vtt**, **subtitulos-palabras.vtt**.
+Esto creará una carpeta llamada **subtitles** con 5 archivos: **subtitulos-frases.srt**, **subtitulos-palabras.srt**, **subtitulos-frases.vtt**, **subtitulos-palabras.vtt** y **subtitulos-texto.txt**.
 
 ### Crear subtítulos de un video de YouTube
 
 ```bash
-subtitle-ai -key "sk-***" -v ruta/al/video.mp4
+subtitle-ai -key "sk-***" -u "https://www.youtube.com/..."
 ```
 
 EL vídeo será descargado en la carpeta `.temp`, si quieres guardarte también el vídeo, deberás copiarlo antes de que el proceso finalice, ya que la carpeta se borrará automáticamente.
@@ -54,6 +56,8 @@ Si quieres especificar la carpeta de salida:
 subtitle-ai -key "sk-***" -v ruta/al/video.mp4 -s ruta/destino/
 ```
 
+Por defecto, se crea la carpeta **subtitles**.
+
 ### Especificar tipo de subtítulo
 
 Si quieres especificar el tipo de subtítulo:
@@ -62,7 +66,9 @@ Si quieres especificar el tipo de subtítulo:
 subtitle-ai -key "sk-***" -v ruta/al/video.mp4 -t srt
 ```
 
-Pueden ser de tipo srt o vtt. Si no pones nada, se crearán ambos tipos de archivos.
+Pueden ser de tipo srt o vtt.
+
+Por defecto se crearán ambos tipos de archivos.
 
 ### Especificar modo de subtítulo
 
@@ -72,7 +78,10 @@ Si quieres especificar el modo de subtítulo:
 subtitle-ai -key "sk-***" -v ruta/al/video.mp4 -m frases
 ```
 
-Pueden ser de tipo frases o palabras. Si no pones nada, se crearán ambos tipos de archivos.
+Pueden ser de tipo frases o palabras.
+
+Por defecto se crearán ambos tipos de archivos.
+
 La diferencia entre ambos es que el modo **frases** crea subtítulos basados en frases, mientras que el modo **palabras** crea los subtítulos basados en cada palabra.
 
 Ejemplo con modo frases:
