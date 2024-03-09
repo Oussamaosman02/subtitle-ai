@@ -84,7 +84,10 @@ export const main = async ({
 
     info("Guardando archivos...");
 
-    writeSubtitleToFile(`${directory}/${prefix}-texto.txt`, subtitles.text);
+    writeSubtitleToFile(
+      `${directory}/${prefix}-texto.txt`,
+      `${url || video}\n\n${subtitles.text}`
+    );
 
     if (type === "srt") {
       writeSubtitleToFile(
