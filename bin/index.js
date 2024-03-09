@@ -1,24 +1,10 @@
 #! /usr/bin/env node
 
-import chalk from "chalk";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import fs from "fs";
-import { createSubtitles } from "./helpers/openaiHelper.js";
-import {
-  getSegmentSubtitles,
-  getWordSubtitles,
-  processSubtitles,
-  writeSubtitleToFile,
-} from "./helpers/subtitlesHelpers.js";
-import { splitVideo } from "./helpers/fileHelpers.js";
-import { getVideo } from "./helpers/youtubeHelpers.js";
-
-const log = (...text) =>
-  console.log(chalk.hex("#DEADED").bold(" >>> "), ...text);
-const info = (...text) => log(chalk.blue(...text));
-const warning = (...text) => log(chalk.bold.hex("#FFA500")(...text));
-const error = (...text) => log(chalk.bold.red(...text));
+import { info, warning } from "./helpers/consoleHelpers.js";
+import { main } from "./main.js";
 
 const getArguments = (key) =>
   yargs(process.argv.slice(2)).parse()[key] ||
@@ -35,6 +21,12 @@ yargs(hideBin(process.argv))
     alias: "u",
     type: "video",
     describe: "Link del video de YouTube",
+    demandOption: false,
+  })
+  .option("json", {
+    alias: "j",
+    type: "json",
+    describe: "Archivo JSON para videos masivos",
     demandOption: false,
   })
   .option("video", {
@@ -71,142 +63,82 @@ yargs(hideBin(process.argv))
 const key = getArguments("key");
 const video = getArguments("video");
 const url = getArguments("url");
+const json = getArguments("json");
 const outputDir = getArguments("salida");
 const type = getArguments("tipo");
 const mode = getArguments("modo");
 
-const chosenMode = () => {
-  if (mode === "frases") {
+const chosenMode = (thisMode) => {
+  if (thisMode === "frases") {
     return ["segment"];
-  } else if (mode === "palabras") {
+  } else if (thisMode === "palabras") {
     return ["word"];
   } else {
     return ["segment", "word"];
   }
 };
 
-const main = async (prefix = "subtitulos") => {
-  const startDate = new Date();
-  info("Empezando tarea");
-  let message = "Procesando video...";
-  let loadingInterval;
-  if (!url && !video) {
-    error("No se ha proporcionado un video");
-    return;
-  }
-  const outTempDir = ".temp/";
-  try {
-    let videoPath = "";
-    if (url && !video) {
-      videoPath = await getVideo(url, outTempDir).then((path) => path);
-    } else if (video && !url) {
-      videoPath = video;
-    } else {
-      error("Se han proporcionado dos fuentes de video y solo se admite una");
-      return;
-    }
-    loadingInterval = setInterval(() => {
-      info(message);
-    }, 1000);
-    const filePaths = await splitVideo(videoPath, outTempDir, prefix);
-    message = "Generando subtítulos...";
-    const subtitlesRaw = await Promise.all(
-      filePaths.map(
-        async (filePath) =>
-          await createSubtitles({
-            filePath,
-            key,
-            mode: chosenMode(),
-          })
-      )
-    );
-
-    const subtitles = processSubtitles(subtitlesRaw).reduce(
-      (prev, curr) => {
-        prev.words = [...(prev.words || []), ...(curr.words || [])];
-        prev.segments = [...(prev.segments || []), ...(curr.segments || [])];
-        prev.text = `${prev.text} ${curr.text}`;
-        return prev;
-      },
-      { words: [], segments: [], text: "" }
-    );
-
-    clearInterval(loadingInterval);
-    const directory = outputDir || "subtitles";
-    if (fs.existsSync(outTempDir)) {
-      fs.rmSync(outTempDir, { recursive: true });
-    }
-
-    info(`Creando carpeta '${directory}'`);
-    fs.mkdirSync(directory, { recursive: true });
-
-    const { srt: subtitlesSrtSegments, vtt: subtitlesVttSegments } =
-      await getSegmentSubtitles(subtitles.segments, chosenMode());
-    const { srt: subtitlesSrtWords, vtt: subtitlesVttWords } =
-      await getWordSubtitles(subtitles.words, chosenMode());
-
-    info("Guardando archivos...");
-
-    writeSubtitleToFile(`${directory}/${prefix}-texto.txt`, subtitles.text);
-
-    if (type === "srt") {
-      writeSubtitleToFile(
-        `${directory}/${prefix}-frases.srt`,
-        subtitlesSrtSegments
-      );
-      writeSubtitleToFile(
-        `${directory}/${prefix}-palabras.srt`,
-        subtitlesSrtWords
-      );
-    } else if (type === "vtt") {
-      writeSubtitleToFile(
-        `${directory}/${prefix}-frases.vtt`,
-        subtitlesVttSegments
-      );
-      writeSubtitleToFile(
-        `${directory}/${prefix}-palabras.vtt`,
-        subtitlesVttWords
-      );
-    } else {
-      writeSubtitleToFile(
-        `${directory}/${prefix}-frases.srt`,
-        subtitlesSrtSegments
-      );
-      writeSubtitleToFile(
-        `${directory}/${prefix}-palabras.srt`,
-        subtitlesSrtWords
-      );
-      writeSubtitleToFile(
-        `${directory}/${prefix}-frases.vtt`,
-        subtitlesVttSegments
-      );
-      writeSubtitleToFile(
-        `${directory}/${prefix}-palabras.vtt`,
-        subtitlesVttWords
-      );
-    }
-
-    const endDate = new Date();
-
-    info("Subtítulos generados");
-    warning(
-      "Tiempo: ",
-      `${new Date(endDate - startDate).getMinutes()}m ${new Date(
-        endDate - startDate
-      ).getSeconds()}s ${new Date(endDate - startDate).getMilliseconds()}ms`
-    );
-  } catch (errorText) {
-    clearInterval(loadingInterval);
-    if (fs.existsSync(outTempDir)) {
-      fs.rmSync(outTempDir, { recursive: true });
-    }
-    if (typeof errorText === "string") {
-      error(errorText);
-    } else {
-      console.error(errorText);
-    }
-    return;
+const storeErrors = async (errors) => {
+  const errorsFile = "errors.txt";
+  if (fs.existsSync(errorsFile)) {
+    await fs.appendFileSync(errorsFile, errors);
+  } else {
+    await fs.writeFileSync(errorsFile, errors);
   }
 };
 
-main();
+(async () => {
+  const prefix = "subtitulos";
+  if (json) {
+    try {
+      const startDate = new Date();
+      const allVideos = JSON.parse(fs.readFileSync(json, "utf8"));
+      if (!allVideos || !allVideos.length) {
+        error("No se ha podido leer el archivo JSON o está vacío");
+        return;
+      }
+
+      for (const videoData of allVideos) {
+        try {
+          await main({
+            key,
+            url: videoData.url, // opcional si video
+            outputDir: videoData.outputDir, // opcional
+            video: videoData.video, // opcional si url
+            type: videoData.type, // opcional
+            mode: chosenMode(videoData.mode), // opcional
+            prefix: videoData.prefix || prefix, // opcional
+          });
+          info(
+            `Procesado: ${allVideos.findIndex((v) => v === videoData) + 1} de ${
+              allVideos.length
+            }`
+          );
+        } catch (e) {
+          await storeErrors(e);
+          error(`Error procesando: ${videoData.url || videoData.video}`);
+        }
+      }
+      const endDate = new Date();
+      warning(
+        "Tiempo total: ",
+        `${new Date(endDate - startDate).getMinutes()}m ${new Date(
+          endDate - startDate
+        ).getSeconds()}s ${new Date(endDate - startDate).getMilliseconds()}ms`
+      );
+    } catch (e) {
+      await storeErrors(e);
+      error("Error procesando el archivo JSON");
+    }
+  } else {
+    await main({
+      key,
+      url,
+      video,
+      outputDir,
+      type,
+      mode: chosenMode(mode),
+      prefix,
+    });
+  }
+})();

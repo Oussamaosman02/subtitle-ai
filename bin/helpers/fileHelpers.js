@@ -1,5 +1,6 @@
 import fs from "fs";
 import ffmpeg from "fluent-ffmpeg";
+import { error } from "./consoleHelpers.js";
 
 /**
  * Retrieves the duration of a video file.
@@ -74,7 +75,7 @@ export async function splitVideo(
           }
         })
         .on("error", (err) => {
-          console.error(`Error splitting part ${i + 1}:`, err);
+          error(`Error splitting part ${i + 1}:`, err);
           reject(err);
         })
         .run();

@@ -1,5 +1,6 @@
 import { OpenAI } from "openai";
 import fs from "fs";
+import { error } from "./consoleHelpers.js";
 
 /**
  * Create subtitles from a file stream using OpenAI API.
@@ -23,7 +24,7 @@ export async function createSubtitles({ filePath, key, mode }) {
 
     return { ...transcription, id: partNumber };
   } catch (e) {
-    console.log(e);
+    error(e);
     return {
       segments: [],
       words: [],

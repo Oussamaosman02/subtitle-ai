@@ -2,4 +2,6 @@ node_modules/
 .env*
 .temp/
 *.mp4
-subtitulos-*
+*.srt
+*.txt
+*.vtt
