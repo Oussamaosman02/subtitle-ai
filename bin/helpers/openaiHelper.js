@@ -1,6 +1,6 @@
 import { OpenAI } from "openai";
 import fs from "fs";
-import { error } from "./consoleHelpers.js";
+import { error, info } from "./consoleHelpers.js";
 
 /**
  * Create subtitles from a file stream using OpenAI API.
@@ -13,7 +13,8 @@ export async function createSubtitles({ filePath, key, mode }) {
     apiKey: key,
   });
   const partNumber = Number(
-    filePath.split(".")[0]?.split("-")?.reverse()[0] || 1
+    filePath.split(".").reverse()[1]?.split("-")?.reverse()[0] ||
+      new Date().getTime()
   );
 
   try {
@@ -24,6 +25,7 @@ export async function createSubtitles({ filePath, key, mode }) {
       timestamp_granularities: mode,
     });
 
+    info(`Parte ${partNumber} procesada`);
     return { ...transcription, id: partNumber };
   } catch (e) {
     error(e);
