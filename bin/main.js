@@ -47,16 +47,22 @@ export const main = async ({
     }, 1000);
     const filePaths = await splitVideo(videoPath, outTempDir, prefix);
     message = "Generando subtítulos...";
-    const subtitlesRaw = await Promise.all(
-      filePaths.map(
-        async (filePath) =>
-          await createSubtitles({
-            filePath,
-            key,
-            mode,
-          })
-      )
-    );
+
+    const subtitlesRaw = [];
+
+    for (const filePath of filePaths) {
+      try {
+        const subtitle = await createSubtitles({
+          filePath,
+          key,
+          mode,
+        });
+        subtitlesRaw.push(subtitle);
+        info(subtitle.id);
+      } catch (e) {
+        error(e);
+      }
+    }
 
     const subtitles = processSubtitles(subtitlesRaw).reduce(
       (prev, curr) => {
@@ -67,9 +73,13 @@ export const main = async ({
       },
       { words: [], segments: [], text: "" }
     );
+
     const typeIsText = type === "txt";
+
     clearInterval(loadingInterval);
+
     const directory = outputDir || "subtitles";
+
     if (fs.existsSync(outTempDir)) {
       fs.rmSync(outTempDir, { recursive: true });
     }

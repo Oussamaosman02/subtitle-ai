@@ -120,7 +120,9 @@ export async function getWordSubtitles(subtitles = [], mode) {
  * @return {undefined}
  */
 export const processSubtitles = (subtitles) => {
-  const sortedSubtitles = [...subtitles].sort((a, b) => a.id - b.id);
+  const sortedSubtitles = [...subtitles].sort(
+    (a, b) => Number(a.id) - Number(b.id)
+  );
   if (sortedSubtitles.length === 1) {
     return sortedSubtitles;
   } else {

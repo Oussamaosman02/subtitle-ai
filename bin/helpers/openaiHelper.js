@@ -12,7 +12,9 @@ export async function createSubtitles({ filePath, key, mode }) {
   const openai = new OpenAI({
     apiKey: key,
   });
-  const partNumber = Number(filePath.split("-")?.[1]?.split(".")?.[0] || 1);
+  const partNumber = Number(
+    filePath.split(".")[0]?.split("-")?.reverse()[0] || 1
+  );
 
   try {
     const transcription = await openai.audio.transcriptions.create({
