@@ -67,7 +67,7 @@ export const main = async ({
       },
       { words: [], segments: [], text: "" }
     );
-
+    const typeIsText = type === "txt";
     clearInterval(loadingInterval);
     const directory = outputDir || "subtitles";
     if (fs.existsSync(outTempDir)) {
@@ -77,17 +77,14 @@ export const main = async ({
     info(`Creando carpeta '${directory}'`);
     fs.mkdirSync(directory, { recursive: true });
 
-    const { srt: subtitlesSrtSegments, vtt: subtitlesVttSegments } =
-      await getSegmentSubtitles(subtitles.segments, mode);
-    const { srt: subtitlesSrtWords, vtt: subtitlesVttWords } =
-      await getWordSubtitles(subtitles.words, mode);
+    const { srt: subtitlesSrtSegments, vtt: subtitlesVttSegments } = typeIsText
+      ? { srt: undefined, vtt: undefined }
+      : await getSegmentSubtitles(subtitles.segments, mode);
+    const { srt: subtitlesSrtWords, vtt: subtitlesVttWords } = typeIsText
+      ? { srt: undefined, vtt: undefined }
+      : await getWordSubtitles(subtitles.words, mode);
 
     info("Guardando archivos...");
-
-    writeSubtitleToFile(
-      `${directory}/${prefix}-texto.txt`,
-      `${url || video}\n\n${subtitles.text}`
-    );
 
     if (type === "srt") {
       writeSubtitleToFile(
@@ -107,6 +104,11 @@ export const main = async ({
         `${directory}/${prefix}-palabras.vtt`,
         subtitlesVttWords
       );
+    } else if (typeIsText) {
+      writeSubtitleToFile(
+        `${directory}/${prefix}.txt`,
+        `${url || video}\n\n${subtitles.text}`
+      );
     } else {
       writeSubtitleToFile(
         `${directory}/${prefix}-frases.srt`,
@@ -123,6 +125,10 @@ export const main = async ({
       writeSubtitleToFile(
         `${directory}/${prefix}-palabras.vtt`,
         subtitlesVttWords
+      );
+      writeSubtitleToFile(
+        `${directory}/${prefix}.txt`,
+        `${url || video}\n\n${subtitles.text}`
       );
     }
 

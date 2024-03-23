@@ -45,7 +45,7 @@ yargs(hideBin(process.argv))
   .option("tipo", {
     alias: "t",
     type: "string",
-    describe: "Tipo de subtítulos: srt o vtt. Po defecto se exportan ambos.",
+    describe: "Tipo de subtítulos: srt, vtt o txt. Po defecto se exportan ambos.",
     demandOption: false,
   })
   .option("modo", {
@@ -56,7 +56,7 @@ yargs(hideBin(process.argv))
     demandOption: false,
   })
   .usage(
-    "Uso: $0 -k [texto] -v [ruta] -o [carpeta] -t [srt|vtt] -m [frases|palabras]"
+    "Uso: $0 -k [texto] -v [ruta] -o [carpeta] -t [srt|vtt|txt] -m [frases|palabras]"
   )
   .parse();
 
