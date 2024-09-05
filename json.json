@@ -1,0 +1,18 @@
+[
+  {
+    "url": "https://www.youtube.com/live/jLwrYL3C57c?si=qGZALr6ZIe520wq3",
+    "outputDir": "javi-linares",
+    "prefix": "javi"
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=Jf0Y_jw0-yE",
+    "outputDir": "design-finance-eu-3"
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=TNc1KYE4NHU",
+    "outputDir": "sergi-torrens-3",
+    "prefix": "sergi",
+    "type": "srt",
+    "mode": "frases"
+  }
+]
