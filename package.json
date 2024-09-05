@@ -15,10 +15,10 @@
   "author": "Amalio",
   "license": "ISC",
   "dependencies": {
+    "@distube/ytdl-core": "^4.14.4",
     "chalk": "^5.3.0",
     "fluent-ffmpeg": "^2.1.2",
     "openai": "^4.28.4",
-    "yargs": "^17.7.2",
-    "ytdl-core": "^4.11.5"
+    "yargs": "^17.7.2"
   }
 }

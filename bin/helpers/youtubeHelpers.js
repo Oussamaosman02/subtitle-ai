@@ -1,4 +1,4 @@
-import ytdl from "ytdl-core";
+import ytdl from "@distube/ytdl-core";
 import fs from "fs";
 import readline from "readline";
 import { error } from "./consoleHelpers.js";
@@ -24,22 +24,32 @@ export const getVideo = async (url, outputDir = ".chunks") => {
         const data = await ytdl(url, {
           quality: "lowest",
         });
+
         fs.mkdirSync(outputDir, { recursive: true });
+
         const outputPath = `${outputDir}/video.mp4`;
+
         data.pipe(fs.createWriteStream(outputPath, {}));
+
         data.once("response", () => {
           starttime = Date.now();
         });
+
         data.on("uncaughtException", function (err) {
           error("UNCAUGHT EXCEPTION - keeping process alive:", err);
         });
+
         data.on("progress", (chunkLength, downloaded, total) => {
           try {
             const percent = downloaded / total;
+
             const downloadedMinutes = (Date.now() - starttime) / 1000 / 60;
+
             const estimatedDownloadTime =
               downloadedMinutes / percent - downloadedMinutes;
+
             readline.cursorTo(process.stdout, 0);
+
             process.stdout.write(
               `${(percent * 100).toFixed(2)}% descargado (${(
                 downloaded /
