@@ -45,7 +45,8 @@ yargs(hideBin(process.argv))
   .option("tipo", {
     alias: "t",
     type: "string",
-    describe: "Tipo de subtítulos: srt, vtt o txt. Po defecto se exportan ambos.",
+    describe:
+      "Tipo de subtítulos: srt, vtt o txt. Po defecto se exportan ambos.",
     demandOption: false,
   })
   .option("modo", {
@@ -98,6 +99,7 @@ const storeErrors = async (errors) => {
         return;
       }
 
+      console.log({ allVideos });
       for (const videoData of allVideos) {
         try {
           await main({

@@ -32,6 +32,9 @@ export async function splitVideo(
   outputDir = ".chunks/",
   prefix = ""
 ) {
+  if (!filePath) {
+    throw new Error("No video file provided");
+  }
   const fileSize = fs.statSync(filePath).size; // in bytes
   const maxFileSize = 25 * 1024 * 1024; // 25MB in bytes
   const maxOutputFileSize = 24 * 1024 * 1024; // 24MB in bytes

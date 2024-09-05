@@ -30,11 +30,13 @@ export const main = async ({
   const outTempDir = ".temp/";
   try {
     let videoPath = "";
+
     if (url && !video) {
       videoPath = await getVideo(url, outTempDir)
         .then((path) => path)
         .catch((e) => {
-          console.log("first4");
+          console.error(e);
+          error("No se ha podido procesar y descargar el vídeo");
         });
     } else if (video && !url) {
       videoPath = video;

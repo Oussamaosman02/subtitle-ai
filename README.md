@@ -46,8 +46,6 @@ subtitle-ai -key "sk-***" -u "https://www.youtube.com/..."
 
 EL vídeo será descargado en la carpeta `.temp`, si quieres guardarte también el vídeo, deberás copiarlo antes de que el proceso finalice, ya que la carpeta se borrará automáticamente.
 
-> Es necesario al menos usar -v o -u ya que son obligatorios, pero no son complementarios, solo debes escoger uno.
-
 ### Especificar la carpeta de salida
 
 Si quieres especificar la carpeta de salida:
@@ -115,3 +113,45 @@ uso
 00:00:30,239 --> 00:00:30,440
 de
 ```
+
+### Crear subtítulos de un archivo JSON
+
+```bash
+subtitle-ai -key "sk-***" -j ruta/al/archivo.json
+```
+
+Estructura del archivo JSON:
+
+```json
+[
+  {
+    "url": "https://www.youtube.com/live/jLwrYL3C57c?si=qGZALr6ZIe520wq3",
+    "outputDir": "javi-linares",
+    "prefix": "javi"
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=Jf0Y_jw0-yE",
+    "outputDir": "design-finance-eu-3"
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=TNc1KYE4NHU",
+    "outputDir": "sergi-torrens-3",
+    "prefix": "sergi",
+    "type": "srt",
+    "mode": "frases"
+  }
+]
+```
+
+Los propiedades que acepta son:
+
+| Propiedad | Equivalencia                           |
+| --------- | -------------------------------------- |
+| url       | -u o --url (opcional si video)         |
+| video     | -v o --video (opcional si url)         |
+| type      | -t o --type (opcional)                 |
+| mode      | -m o --mode (opcional)                 |
+| prefix    | por defecto es "subtitulos" (opcional) |
+| outputDir | -s o --outputDir (opcional)            |
+
+> Es necesario al menos usar -v, -j o -u ya que son obligatorios, pero no son complementarios, solo debes escoger uno.
