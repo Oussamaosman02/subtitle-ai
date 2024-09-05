@@ -64,7 +64,7 @@ Si quieres especificar el tipo de subtítulo:
 subtitle-ai -key "sk-***" -v ruta/al/video.mp4 -t srt
 ```
 
-Pueden ser de tipo srt o vtt.
+Pueden ser de tipo srt, vtt o txt (solo el texto, sin marcas de tiempo).
 
 Por defecto se crearán ambos tipos de archivos.
 
@@ -127,7 +127,8 @@ Estructura del archivo JSON:
   {
     "url": "https://www.youtube.com/live/jLwrYL3C57c?si=qGZALr6ZIe520wq3",
     "outputDir": "javi-linares",
-    "prefix": "javi"
+    "prefix": "javi",
+    "type": "txt"
   },
   {
     "url": "https://www.youtube.com/watch?v=Jf0Y_jw0-yE",
